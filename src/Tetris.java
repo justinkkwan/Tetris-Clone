@@ -58,7 +58,7 @@ public class Tetris {
     public void main() {
         JFrame window = new JFrame("Tetris");
         window.add(game);
-        window.setSize(300, 600);
+        window.setSize(300, 560);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setVisible(true);
 

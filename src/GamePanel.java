@@ -1,3 +1,4 @@
+import Pieces.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -17,6 +18,8 @@ public class GamePanel extends JPanel {
 
     public GamePanel(Tetris t){
         tetris = t;
+
+        this.setBackground(Color.WHITE);
 
         RightOnLeftRelease = false;
         LeftOnRightRelease = false;
@@ -181,6 +184,9 @@ public class GamePanel extends JPanel {
 
 
         //Preview pieces
+        //Taken out for aesthetics
+        /*
+        g.setColor(Color.BLACK);
         for(int i=0; i<4; i++){
 
             for(int j=0;j<4;j++){
@@ -190,6 +196,7 @@ public class GamePanel extends JPanel {
             }
 
         }
+        */
 
         Color[][] cBoard = tetris.matrix;
         for(int i=0;i<10;i++){
@@ -213,6 +220,24 @@ public class GamePanel extends JPanel {
             g.fillRect(21+ (tetris.activePieceLocations[2*i]-1)*17 , 41+ (tetris.activePieceLocations[2*i+1]-2)*17 ,16,16);
         }
 
+        paintPreviews(g);
+
+    }
+
+    private void paintPreviews(Graphics g){
+        for(int i=0; i<4; i++){
+            Pieces currPiece = tetris.bag.get(i+1);
+            g.setColor(currPiece.getColor());
+            int[] temp = Piece.lookup(currPiece,0);
+            for(int j=0;j<4;j++){
+                g.fillRect(201 + temp[2*j]*17 , 41 + i*72 + temp[2*j+1]*17 ,16,16);
+            }
+            g.setColor(Color.BLACK);
+            for(int j=0;j<4;j++){
+                g.drawRect(200 + temp[2*j]*17 , 40 + i*72 + temp[2*j+1]*17 ,17,17);
+            }
+
+        }
     }
 
     public void paintPiece(Graphics g, Color c, int[]oldBlocks, int[] blocks) {

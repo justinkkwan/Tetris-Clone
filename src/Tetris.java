@@ -24,11 +24,12 @@ public class Tetris {
     int[] oldPieceLocations;
     int activePieceRelativeX;
     int activePieceRelativeY;
+    int[] activePieceProjection;
 
     private boolean goingDown = false;
 
     private static final int AutoRepeatRate = 1;
-    private static final int DelayAutoShift = 3;
+    private static final int DelayAutoShift = 5;
 
     private int ARRCount = 0;
     private int DASLeftCount = 0;
@@ -71,7 +72,7 @@ public class Tetris {
 
     public void gameLoop() {
 
-        int targetFPS = 30;
+        int targetFPS = 60;
         long lastRecordedTime = System.nanoTime();
         long currTime;
         long timeBetween;
@@ -116,6 +117,8 @@ public class Tetris {
         }
 
         moveAccordingToKeyPresses();
+
+        findProjection();
 
 
     }
@@ -171,7 +174,7 @@ public class Tetris {
         boolean clear;
         for (int i = 0; i < 4; i++) {
             clear = true;
-            for (int j = 1; j < 10; j++) {
+            for (int j = 1; j < 11; j++) {
                 if (matrix[activePieceLocations[2 * i + 1]][j]==null) clear = false;
             }
             if (clear) clearLine(activePieceLocations[2 * i + 1]);
@@ -275,6 +278,7 @@ public class Tetris {
                 potentialLocation[2 * i + 1] += activePieceRelativeY;
             }
             for (int i = 0; i < 4; i++) {
+
                 if (matrix[potentialLocation[2 * i + 1]][potentialLocation[2 * i]]!=null) {//check potential new location
                     okay = false;
                 }
@@ -327,7 +331,9 @@ public class Tetris {
         for (int i = 0; i < 4; i++) {
             activePieceLocations[2 * i] += activePieceRelativeX;
         }
+
         oldPieceLocations = new int[8];
+
 
 
         for (int i = 0; i < 22; i++) {
@@ -345,9 +351,27 @@ public class Tetris {
             matrix[i][11] = Color.BLACK;
         }
 
+        // Can only find projection after defining boundaries
+        activePieceProjection = new int[8];
+        findProjection();
+
         //game.paintComponent(g);
     }
 
+    private void findProjection(){
+        int addY = 0;
+        while (matrix[activePieceLocations[1] + addY][activePieceLocations[0]]==null &&
+                matrix[activePieceLocations[3] + addY][activePieceLocations[2]]==null &&
+                matrix[activePieceLocations[5] + addY][activePieceLocations[4]]==null &&
+                matrix[activePieceLocations[7] + addY][activePieceLocations[6]]==null) addY++;
+        addY--;
+        for (int i = 0; i < 4; i++) {
+            activePieceProjection[2*i] = activePieceLocations[2*i];
+        }
+        for (int i = 0; i < 4; i++) {
+            activePieceProjection[2*i+1] = activePieceLocations[2*i+1] + addY;
+        }
+    }
 //    private void movePiece(int[] sendTo){
 //        boolean okay=true;
 //        for(int i=0;i<4;i++){

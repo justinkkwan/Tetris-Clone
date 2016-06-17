@@ -12,9 +12,14 @@ import java.io.IOException;
  */
 public class GamePanel extends JPanel {
     private Tetris tetris;
+    private boolean RightOnLeftRelease;
+    private boolean LeftOnRightRelease;
 
     public GamePanel(Tetris t){
         tetris = t;
+
+        RightOnLeftRelease = false;
+        LeftOnRightRelease = false;
 
         this.setLayout(null);
 
@@ -53,6 +58,10 @@ public class GamePanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 tetris.keysPressed[2]=true;
+                if(tetris.keysPressed[3]){
+                    tetris.keysPressed[3]=false;
+                    RightOnLeftRelease=true;
+                }
             }
         });
 
@@ -60,6 +69,10 @@ public class GamePanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 tetris.keysPressed[3]=true;
+                if(tetris.keysPressed[2]){
+                    tetris.keysPressed[2]=false;
+                    LeftOnRightRelease=true;
+                }
             }
         });
 
@@ -110,6 +123,8 @@ public class GamePanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 tetris.keysPressed[2]=false;
+                LeftOnRightRelease=false;
+                if(RightOnLeftRelease) tetris.keysPressed[3]=true;
             }
         });
 
@@ -117,6 +132,8 @@ public class GamePanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 tetris.keysPressed[3]=false;
+                RightOnLeftRelease=false;
+                if(LeftOnRightRelease) tetris.keysPressed[2]=true;
             }
         });
 
@@ -184,12 +201,17 @@ public class GamePanel extends JPanel {
             }
         }
 
+
+        g.setColor(Color.DARK_GRAY);
+        for(int i=0; i<4;i++){
+            g.fillRect(21+ (tetris.activePieceProjection[2*i]-1)*17 , 41+ (tetris.activePieceProjection[2*i+1]-2)*17 ,16,16);
+        }
+
+        //Draw piece after projection so that shadow doesn't cover actual piece
         g.setColor(tetris.activePiece.getColor());
         for(int i=0; i<4;i++){
             g.fillRect(21+ (tetris.activePieceLocations[2*i]-1)*17 , 41+ (tetris.activePieceLocations[2*i+1]-2)*17 ,16,16);
         }
-
-
 
     }
 
